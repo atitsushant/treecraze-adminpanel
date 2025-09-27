@@ -1,5 +1,0 @@
-services:
-  - type: static
-    name: treecraze-adminpanel
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
