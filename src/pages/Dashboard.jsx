@@ -1,10 +1,32 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import DashboardBox from '../components/DashboardBox';
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 const Dashboard = () => {
-  const reports = ['Garbage near park', 'Overflowing bin', 'Plastic dump', 'Blocked drain', 'Illegal burning'];
-  const reporters = ['Amit Sharma', 'Neha Verma', 'Ravi Singh', 'Pooja Yadav', 'Karan Mehta'];
-  const volunteers = ['Sana Khan', 'Deepak Joshi', 'Meera Patel', 'Rahul Dev', 'Anjali Rao'];
+  const [reports, setReports] = useState([]);
+  const [reporters, setReporters] = useState([]);
+  const [volunteers, setVolunteers] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/reports/`);
+        const data = res.data;
+
+        // Extract descriptions, reporters, volunteers
+        setReports(data.map((r) => r.description || 'No description'));
+        setReporters([...new Set(data.map((r) => r.reporter_name || 'Unknown'))]);
+        setVolunteers([...new Set(data.map((r) => r.volunteer_name || 'Unassigned'))]);
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
